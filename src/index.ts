@@ -35,15 +35,10 @@ const run = async () => {
     );
 
     const configureGit = async () => {
-      core.debug(`Setting git identity`);
-      await exec.exec("git", [
-        "config",
-        "--global",
-        "user.email",
-        commitEmail,
-        "user.name",
-        commitName,
-      ]);
+      core.debug(`Setting git user email`);
+      await exec.exec("git", ["config", "--global", "user.email", commitEmail]);
+      core.debug(`Setting git user name`);
+      await exec.exec("git", ["config", "--global", "user.name", commitName]);
     };
 
     const setupKustomize = async () => {
