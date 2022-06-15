@@ -88,28 +88,49 @@ const run = async () => {
     const repoPath = repo.slice(repoNameStartIdx + 1);
     core.debug(`Working in ${repoPath}`);
 
-    const overlayPath = `${repoPath}/kustomize/overlays/${overlayName}`;
-    core.info(`Setting ${serviceName}=${serviceVersion} in ${overlayPath}`);
-    await exec.exec(
-      kustomizeBinary,
-      ["edit", "set", "image", `${serviceName}=*:${serviceVersion}`],
-      {
-        cwd: overlayPath,
-      }
-    );
+    let attempts = 0;
+    while (true) {
+      const overlayPath = `${repoPath}/kustomize/overlays/${overlayName}`;
+      core.info(`Setting ${serviceName}=${serviceVersion} in ${overlayPath}`);
+      await exec.exec(
+        kustomizeBinary,
+        ["edit", "set", "image", `${serviceName}=*:${serviceVersion}`],
+        {
+          cwd: overlayPath,
+        }
+      );
 
-    core.info(`Comitting`);
-    await exec.exec(
-      "git",
-      ["commit", "--all", "--message", `${serviceName}=${serviceVersion}`],
-      {
+      core.info(`Comitting`);
+      await exec.exec(
+        "git",
+        ["commit", "--all", "--message", `${serviceName}=${serviceVersion}`],
+        {
+          cwd: repoPath,
+        }
+      );
+      core.info(`Pushing`);
+      const res = await exec.exec("git", ["push"], {
         cwd: repoPath,
+      });
+      if (res === 0) break;
+
+      attempts += 1;
+      if (attempts > 3) {
+        core.setFailed(
+          `Failed to push to cytoplasm after ${attempts} attempts`
+        );
+        return;
       }
-    );
-    core.info(`Pushing`);
-    await exec.exec("git", ["push"], {
-      cwd: repoPath,
-    });
+      core.info("Failed to push, retrying");
+      core.debug("Resetting");
+      await exec.exec("git", ["reset", "--hard", "origin/main"], {
+        cwd: repoPath,
+      });
+      core.debug("Pulling");
+      await exec.exec("git", ["pull"], {
+        cwd: repoPath,
+      });
+    }
   } catch (error) {
     core.setFailed(error.message);
   }
