@@ -55,10 +55,12 @@ const run = async () => {
 
     const getVersion = async () => {
       core.debug(`Fetching version artifact "${version}"`);
-      const path = (await artifactClient.downloadArtifact(version))
-        .downloadPath;
-      core.debug(`Reading version artifact from ${path}`);
-      return await fs.readFile(path);
+      const p = path.join(
+        (await artifactClient.downloadArtifact(version)).downloadPath,
+        "version.txt"
+      );
+      core.debug(`Reading version artifact from ${p}`);
+      return await fs.readFile(p);
     };
 
     const downloadCytoplasm = async () => {
