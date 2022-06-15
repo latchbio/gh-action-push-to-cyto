@@ -24,3 +24,4 @@ repos:
     rev: v2.7.0
     hooks:
       - id: prettier
+        exclude: ^dist/
