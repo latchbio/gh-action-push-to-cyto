@@ -1,0 +1,32 @@
+name: "Push to Cyto"
+description: "Reliably push to cytoplasm, retrying on failure"
+inputs:
+  service-name:
+    description: "Name of service for which to update the version"
+    required: true
+  overlay-name:
+    description: "Name of overlay (environment) in which to update the version"
+    required: true
+  repo:
+    description: "cytoplasm repository name"
+    required: true
+    default: "latchbio/cytoplasm"
+  version:
+    description: "Name of the version artifact"
+    required: true
+    default: "version"
+  kustomize-version:
+    description: "Kustomize version"
+    required: true
+    default: "4.2.0"
+  commit-email:
+    description: "Email to sign the commit with"
+    required: true
+    default: "cd@latch.bio"
+  commit-name:
+    description: "Name to sign the commit with"
+    required: true
+    default: "Continuous Deployment"
+runs:
+  using: "node16"
+  main: "dist/index.js"
