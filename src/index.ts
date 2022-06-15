@@ -12,6 +12,7 @@ const run = async () => {
     const artifactClient = artifact.create();
 
     core.debug("Loading inputs");
+    const token = core.getInput("token");
     const serviceName = core.getInput("service-name");
     const overlayName = core.getInput("overlay-name");
 
@@ -25,6 +26,7 @@ const run = async () => {
       [
         `Upgrading ${serviceName} in ${overlayName}`,
         `  Version artifact: ${version}`,
+        `  Token: ${"*".repeat(token.length)}`,
         "",
         `  Cytoplasm: ${repo}`,
         `  Kustomize version: ${kustomizeVersion}`,
@@ -60,8 +62,8 @@ const run = async () => {
     };
 
     const downloadCytoplasm = async () => {
-      const url = `git@github.com:${repo}.git`;
-      core.debug(`Cloning cytoplasm from ${url}`);
+      const url = `https://${token}:x-oauth-basic@github.com/${repo}.git`;
+      core.debug(`Cloning cytoplasm from ${url.replace(token, "TOKEN")}`);
       await exec.exec("git", ["clone", url]);
     };
 

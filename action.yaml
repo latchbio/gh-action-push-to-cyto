@@ -1,6 +1,9 @@
 name: "Push to Cyto"
 description: "Reliably push to cytoplasm, retrying on failure"
 inputs:
+  token:
+    description: "PAT to use to clone cytoplasm"
+    required: true
   service-name:
     description: "Name of service for which to update the version"
     required: true
