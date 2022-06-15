@@ -34,6 +34,18 @@ const run = async () => {
       ].join("\n")
     );
 
+    const configureGit = async () => {
+      core.debug(`Setting git identity`);
+      await exec.exec("git", [
+        "config",
+        "--global",
+        "user.email",
+        commitEmail,
+        "user.name",
+        commitName,
+      ]);
+    };
+
     const setupKustomize = async () => {
       const url = `https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${kustomizeVersion}/kustomize_v${kustomizeVersion}_linux_amd64.tar.gz`;
       core.debug(`Fetching customize from ${url}`);
@@ -70,10 +82,11 @@ const run = async () => {
       await exec.exec("git", ["clone", url]);
     };
 
-    const [kustomizeBinary, serviceVersion, _] = await Promise.all([
+    const [kustomizeBinary, serviceVersion, _, _2] = await Promise.all([
       setupKustomize(),
       getVersion(),
       downloadCytoplasm(),
+      configureGit(),
     ]);
 
     const repoNameStartIdx = repo.lastIndexOf("/");
@@ -89,17 +102,11 @@ const run = async () => {
         cwd: overlayPath,
       }
     );
+
     core.info(`Comitting`);
     await exec.exec(
       "git",
-      [
-        "commit",
-        "--author",
-        `${commitName} <${commitEmail}>`,
-        "--all",
-        "--message",
-        `${serviceName}=${serviceVersion}`,
-      ],
+      ["commit", "--all", "--message", `${serviceName}=${serviceVersion}`],
       {
         cwd: repoPath,
       }
