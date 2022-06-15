@@ -40,17 +40,18 @@ const run = async () => {
       const kustomizeTar = await tc.downloadTool(url);
       core.debug(`Extracting ${kustomizeTar}`);
       const kustomizeFolder = await tc.extractTar(kustomizeTar);
-      core.debug(`Caching ${kustomizeFolder}/kustomize`);
+      const kustomizeBinary = path.join(kustomizeFolder, "kustomize");
+      core.debug(`Caching ${kustomizeBinary}`);
       const kustomizeCachedPath = await tc.cacheFile(
-        kustomizeFolder,
+        kustomizeBinary,
         "kustomize",
         "kustomize",
         kustomizeVersion
       );
-      const kustomizeBinary = path.join(kustomizeCachedPath, "kustomize");
-      core.debug(`Making ${kustomizeBinary} executable`);
-      await exec.exec("chmod", ["u+x", kustomizeBinary]);
-      return kustomizeBinary;
+      const kustomizeCachedBinary = path.join(kustomizeCachedPath, "kustomize");
+      core.debug(`Making ${kustomizeCachedBinary} executable`);
+      await exec.exec("chmod", ["u+x", kustomizeCachedBinary]);
+      return kustomizeCachedBinary;
     };
 
     const getVersion = async () => {
