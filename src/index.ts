@@ -100,9 +100,16 @@ const run = async () => {
         }
       );
 
+      const diffExitCode = await exec.exec("git", ["diff", "--exit-code"], {
+        cwd: repoPath,
+      });
+      if (diffExitCode == 0) {
+        core.info("Service is already up-to-date");
+        return;
+      }
+
       core.info(`Comitting`);
-      let commitOutput = "";
-      const commitExitCode = await exec.exec(
+      await exec.exec(
         "git",
         [
           "commit",
@@ -113,22 +120,9 @@ const run = async () => {
         ],
         {
           cwd: repoPath,
-          listeners: {
-            stdout: (data: Buffer) => {
-              commitOutput += data.toString("utf-8");
-            },
-          },
           failOnStdErr: false,
         }
       );
-      if (commitExitCode !== 0) {
-        if (commitOutput.length !== 0) {
-          core.setFailed("Commiting failed:\n" + commitOutput);
-          return;
-        }
-        core.info("Nothing to commit");
-        return;
-      }
 
       core.info(`Pushing`);
       const res = await exec.exec("git", ["push"], {
