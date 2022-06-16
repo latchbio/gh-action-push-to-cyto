@@ -102,6 +102,7 @@ const run = async () => {
 
       const diffExitCode = await exec.exec("git", ["diff", "--exit-code"], {
         cwd: repoPath,
+        failOnStdErr: false,
       });
       if (diffExitCode == 0) {
         core.info("Service is already up-to-date");
