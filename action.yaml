@@ -21,7 +21,7 @@ inputs:
   kustomize-version:
     description: "Kustomize version"
     required: true
-    default: "4.2.0"
+    default: "4.5.4"
   commit-email:
     description: "Email to sign the commit with"
     required: true
