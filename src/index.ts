@@ -102,7 +102,7 @@ const run = async () => {
 
       const diffExitCode = await exec.exec("git", ["diff", "--exit-code"], {
         cwd: repoPath,
-        ignoreReturnCode: false,
+        ignoreReturnCode: true,
       });
       if (diffExitCode == 0) {
         core.info("Service is already up-to-date");
@@ -121,7 +121,7 @@ const run = async () => {
       core.info(`Pushing`);
       const res = await exec.exec("git", ["push"], {
         cwd: repoPath,
-        ignoreReturnCode: false,
+        ignoreReturnCode: true,
       });
       if (res === 0) break;
 
