@@ -111,13 +111,7 @@ const run = async () => {
       core.info(`Comitting`);
       await exec.exec(
         "git",
-        [
-          "commit",
-          "--all",
-          "--message",
-          `${serviceName}=${serviceVersion}`,
-          "--porcelain",
-        ],
+        ["commit", "--all", "--message", `${serviceName}=${serviceVersion}`],
         {
           cwd: repoPath,
           failOnStdErr: false,
