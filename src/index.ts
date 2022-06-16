@@ -114,7 +114,6 @@ const run = async () => {
         ["commit", "--all", "--message", `${serviceName}=${serviceVersion}`],
         {
           cwd: repoPath,
-          failOnStdErr: false,
         }
       );
 
