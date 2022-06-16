@@ -32,5 +32,5 @@ repos:
         entry: yarn
         args: ["package"]
         language: system
-        files: ^src/$
+        files: ^src/
         pass_filenames: false
