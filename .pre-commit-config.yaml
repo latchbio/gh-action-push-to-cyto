@@ -25,3 +25,12 @@ repos:
     hooks:
       - id: prettier
         exclude: ^dist/
+  - repo: local
+    hooks:
+      - id: package
+        name: Package
+        entry: yarn
+        args: ["package"]
+        language: system
+        files: ^src/$
+        pass_filenames: false

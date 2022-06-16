@@ -68,7 +68,7 @@ const run = async () => {
         "version.txt"
       );
       core.debug(`Reading version artifact from ${p}`);
-      return await fs.readFile(p);
+      return (await fs.readFile(p, { encoding: "utf-8" })).trim();
     };
 
     const downloadCytoplasm = async () => {
