@@ -101,16 +101,39 @@ const run = async () => {
       );
 
       core.info(`Comitting`);
-      await exec.exec(
+      let commitOutput = "";
+      const commitExitCode = await exec.exec(
         "git",
-        ["commit", "--all", "--message", `${serviceName}=${serviceVersion}`],
+        [
+          "commit",
+          "--all",
+          "--message",
+          `${serviceName}=${serviceVersion}`,
+          "--porcelain",
+        ],
         {
           cwd: repoPath,
+          listeners: {
+            stdout: (data: Buffer) => {
+              commitOutput += data.toString("utf-8");
+            },
+          },
+          failOnStdErr: false,
         }
       );
+      if (commitExitCode !== 0) {
+        if (commitOutput.length !== 0) {
+          core.setFailed("Commiting failed:\n" + commitOutput);
+          return;
+        }
+        core.info("Nothing to commit");
+        return;
+      }
+
       core.info(`Pushing`);
       const res = await exec.exec("git", ["push"], {
         cwd: repoPath,
+        failOnStdErr: false,
       });
       if (res === 0) break;
 
@@ -132,7 +155,7 @@ const run = async () => {
       });
     }
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(error);
   }
 };
 
