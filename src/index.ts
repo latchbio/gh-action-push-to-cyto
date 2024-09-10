@@ -63,9 +63,15 @@ const run = async () => {
 
     const getVersion = async () => {
       core.debug(`Fetching version artifact "${version}"`);
+
       const artifact = (await artifactClient.getArtifact(version)).artifact
+      core.debug(`Version artifact ${artifact}`)
       const artifactId = artifact.id
+      core.debug(`Version artifact id: ${artifactId}`)
+
       const downloadPath = (await artifactClient.downloadArtifact(artifactId)).downloadPath
+      core.debug(`Version artifact downaloadPath: ${downloadPath}`)
+
       if (downloadPath == null)
         throw new Error("Download path for artifact ${version} is null");
 
