@@ -43,7 +43,7 @@ const run = async () => {
 
     const setupKustomize = async () => {
       const url = `https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${kustomizeVersion}/kustomize_v${kustomizeVersion}_linux_amd64.tar.gz`;
-      core.debug(`Fetching customize from ${url}`);
+      core.debug(`Fetching kustomize from ${url}`);
       const kustomizeTar = await tc.downloadTool(url);
       core.debug(`Extracting ${kustomizeTar}`);
       const kustomizeFolder = await tc.extractTar(kustomizeTar);
