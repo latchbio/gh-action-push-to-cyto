@@ -18,6 +18,9 @@ inputs:
     description: "Name of the version artifact"
     required: true
     default: "version"
+  build-version:
+    description: "Name of the build version"
+    required: true
   kustomize-version:
     description: "Kustomize version"
     required: true
@@ -31,5 +34,5 @@ inputs:
     required: true
     default: "Continuous Deployment"
 runs:
-  using: "node16"
+  using: "node20"
   main: "dist/index.js"

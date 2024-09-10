@@ -1,15 +1,12 @@
 import * as path from "node:path";
-import * as fs from "node:fs/promises";
 
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import { DefaultArtifactClient } from "@actions/artifact";
 import * as tc from "@actions/tool-cache";
 
 const run = async () => {
   try {
     core.debug("Creating artifact client");
-    const artifactClient = new DefaultArtifactClient()
 
     core.debug("Loading inputs");
     const token = core.getInput("token");
@@ -17,15 +14,15 @@ const run = async () => {
     const overlayName = core.getInput("overlay-name");
 
     const repo = core.getInput("repo");
-    const version = core.getInput("version");
     const kustomizeVersion = core.getInput("kustomize-version");
+    const serviceVersion = core.getInput("build-version")
 
     const commitEmail = core.getInput("commit-email");
     const commitName = core.getInput("commit-name");
     core.info(
       [
         `Upgrading ${serviceName} in ${overlayName}`,
-        `  Version artifact: ${version}`,
+        `  Build Version : ${serviceVersion}`,
         `  Token: ${"*".repeat(token.length)}`,
         "",
         `  Cytoplasm: ${repo}`,
@@ -61,34 +58,14 @@ const run = async () => {
       return kustomizeCachedBinary;
     };
 
-    const getVersion = async () => {
-      core.debug(`Fetching version artifact "${version}"`);
-
-      const artifact = (await artifactClient.getArtifact(version)).artifact
-      core.debug(`Version artifact ${artifact}`)
-      const artifactId = artifact.id
-      core.debug(`Version artifact id: ${artifactId}`)
-
-      const downloadPath = (await artifactClient.downloadArtifact(artifactId)).downloadPath
-      core.debug(`Version artifact downaloadPath: ${downloadPath}`)
-
-      if (downloadPath == null)
-        throw new Error("Download path for artifact ${version} is null");
-
-      const p = path.join( downloadPath, "version.txt");
-      core.debug(`Reading version artifact from ${p}`);
-      return (await fs.readFile(p, { encoding: "utf-8" })).trim();
-    };
-
     const downloadCytoplasm = async () => {
       const url = `https://${token}:x-oauth-basic@github.com/${repo}.git`;
       core.debug(`Cloning cytoplasm from ${url.replace(token, "TOKEN")}`);
       await exec.exec("git", ["clone", url]);
     };
 
-    const [kustomizeBinary, serviceVersion, _, _2] = await Promise.all([
+    const [kustomizeBinary, _, _2] = await Promise.all([
       setupKustomize(),
-      getVersion(),
       downloadCytoplasm(),
       configureGit(),
     ]);
