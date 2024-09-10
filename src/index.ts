@@ -6,8 +6,6 @@ import * as tc from "@actions/tool-cache";
 
 const run = async () => {
   try {
-    core.debug("Creating artifact client");
-
     core.debug("Loading inputs");
     const token = core.getInput("token");
     const serviceName = core.getInput("service-name");

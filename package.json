@@ -5,7 +5,6 @@
     "package": "yarn run ncc build src/index.ts --transpile-only --minify"
   },
   "dependencies": {
-    "@actions/artifact": "v2",
     "@actions/core": "^1.9.0",
     "@actions/exec": "^1.1.1",
     "@actions/tool-cache": "^2.0.1"
