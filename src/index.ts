@@ -3,13 +3,13 @@ import * as fs from "node:fs/promises";
 
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
-import * as artifact from "@actions/artifact";
+import { DefaultArtifactClient } from "@actions/artifact";
 import * as tc from "@actions/tool-cache";
 
 const run = async () => {
   try {
     core.debug("Creating artifact client");
-    const artifactClient = artifact.create();
+    const artifactClient = new DefaultArtifactClient()
 
     core.debug("Loading inputs");
     const token = core.getInput("token");
@@ -63,10 +63,13 @@ const run = async () => {
 
     const getVersion = async () => {
       core.debug(`Fetching version artifact "${version}"`);
-      const p = path.join(
-        (await artifactClient.downloadArtifact(version)).downloadPath,
-        "version.txt"
-      );
+      const artifact = (await artifactClient.getArtifact(version)).artifact
+      const artifactId = artifact.id
+      const downloadPath = (await artifactClient.downloadArtifact(artifactId)).downloadPath
+      if (downloadPath == null)
+        throw new Error("Download path for artifact ${version} is null");
+
+      const p = path.join( downloadPath, "version.txt");
       core.debug(`Reading version artifact from ${p}`);
       return (await fs.readFile(p, { encoding: "utf-8" })).trim();
     };
