@@ -57,7 +57,7 @@ const run = async () => {
     };
 
     const downloadCytoplasm = async () => {
-      const url = `https://${token}:x-oauth-basic@github.com/${repo}.git`;
+      const url = `https://x-access-token:${token}@github.com/${repo}.git`;
       core.debug(`Cloning cytoplasm from ${url.replace(token, "TOKEN")}`);
       await exec.exec("git", ["clone", url]);
     };
