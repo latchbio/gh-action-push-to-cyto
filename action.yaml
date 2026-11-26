@@ -2,7 +2,7 @@ name: "Push to Cyto"
 description: "Reliably push to cytoplasm, retrying on failure"
 inputs:
   token:
-    description: "PAT to use to clone cytoplasm"
+    description: "Token to clone and push cytoplasm (PAT or GitHub App installation token)"
     required: true
   service-name:
     description: "Name of service for which to update the version"
